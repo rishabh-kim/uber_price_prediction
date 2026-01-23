@@ -3,15 +3,17 @@ Flask web application for Uber Price Predictor
 """
 
 from flask import Flask, render_template, request, jsonify
-from model import predict_price, train_model
+from model import predict_price, load_model
 import os
 
 app = Flask(__name__)
 
-# Train model on startup if it doesn't exist
-if not os.path.exists('model.pkl'):
-    print("Training model on startup...")
-    train_model()
+# Load pre-trained model (no training needed on startup)
+try:
+    load_model()
+    print("✅ Model loaded successfully")
+except FileNotFoundError:
+    print("❌ Model not found - please run 'python model.py' locally first")
 
 
 @app.route('/')
@@ -63,3 +65,4 @@ if __name__ == '__main__':
     # Get port from environment variable or default to 8000
     port = int(os.environ.get('PORT', 8000))
     app.run(host='0.0.0.0', port=port, debug=False)
+

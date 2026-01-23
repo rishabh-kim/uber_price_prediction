@@ -42,7 +42,6 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-model.pkl
 *.csv
 .env
 .env.local
@@ -55,3 +54,4 @@ instance/
 .pytest_cache/
 .coverage
 htmlcov/
+
