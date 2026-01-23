@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber Price Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-group .form-group {
+            margin-bottom: 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reset {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+            border-left: 4px solid #667eea;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .result-price {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .result-details div {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border-left: 4px solid #c33;
+            font-size: 14px;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #446;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .result-price {
+                font-size: 28px;
+            }
+
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Uber Price Predictor</h1>
+            <p>Estimate your ride price in seconds</p>
+        </div>
+
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="distance">Distance (miles)</label>
+                <input 
+                    type="number" 
+                    id="distance" 
+                    name="distance" 
+                    placeholder="e.g., 2.5" 
+                    step="0.1" 
+                    min="0.1" 
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="surge">Surge Multiplier</label>
+                    <input 
+                        type="number" 
+                        id="surge" 
+                        name="surge" 
+                        placeholder="e.g., 1.5" 
+                        step="0.1" 
+                        min="1" 
+                        value="1.0"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="cabType">Service</label>
+                    <select id="cabType" name="cabType" required>
+                        <option value="Uber">Uber</option>
+                        <option value="Lyft">Lyft</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="rideName">Ride Type</label>
+                <select id="rideName" name="rideName" required>
+                    <option value="UberX">UberX</option>
+                    <option value="UberXL">UberXL</option>
+                    <option value="Black">Uber Black</option>
+                    <option value="Lyft">Lyft</option>
+                    <option value="Shared">Shared</option>
+                    <option value="Lux Black XL">Lux Black XL</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-predict">Predict Price</button>
+                <button type="reset" class="btn-reset">Clear</button>
+            </div>
+        </form>
+
+        <div class="loading" id="loading">
+            <span class="spinner"></span> Calculating price...
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <div class="result-label">Estimated Price</div>
+            <div class="result-price" id="resultPrice">$0.00</div>
+            <div class="result-details">
+                <div>
+                    <span>Distance:</span>
+                    <span id="resultDistance">0 mi</span>
+                </div>
+                <div>
+                    <span>Surge Multiplier:</span>
+                    <span id="resultSurge">1.0x</span>
+                </div>
+                <div>
+                    <span>Service:</span>
+                    <span id="resultService">-</span>
+                </div>
+                <div>
+                    <span>Ride Type:</span>
+                    <span id="resultRide">-</span>
+                </div>
+            </div>
+            <div class="info">
+                ℹ️ This is an estimate based on our machine learning model trained on historical rideshare data. Actual prices may vary.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+        const loadingDiv = document.getElementById('loading');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Clear previous results
+            resultDiv.classList.remove('show');
+            errorDiv.classList.remove('show');
+            loadingDiv.classList.add('show');
+
+            const formData = {
+                distance: parseFloat(document.getElementById('distance').value),
+                surge_multiplier: parseFloat(document.getElementById('surge').value),
+                cab_type: document.getElementById('cabType').value,
+                ride_name: document.getElementById('rideName').value
+            };
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                loadingDiv.classList.remove('show');
+
+                if (response.ok) {
+                    // Display result
+                    document.getElementById('resultPrice').textContent = `$${data.predicted_price.toFixed(2)}`;
+                    document.getElementById('resultDistance').textContent = `${data.distance} mi`;
+                    document.getElementById('resultSurge').textContent = `${data.surge_multiplier}x`;
+                    document.getElementById('resultService').textContent = data.cab_type;
+                    document.getElementById('resultRide').textContent = data.ride_name;
+
+                    resultDiv.classList.add('show');
+                    errorDiv.classList.remove('show');
+                } else {
+                    // Display error
+                    errorDiv.textContent = '❌ ' + (data.error || 'An error occurred');
+                    errorDiv.classList.add('show');
+                }
+            } catch (error) {
+                loadingDiv.classList.remove('show');
+                errorDiv.textContent = '❌ Network error. Please try again.';
+                errorDiv.classList.add('show');
+            }
+        });
+
+        // Set default values
+        document.getElementById('distance').value = '2.5';
+        document.getElementById('surge').value = '1.0';
+    </script>
+</body>
+</html>
