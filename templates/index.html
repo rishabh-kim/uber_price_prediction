@@ -291,12 +291,22 @@
             <div class="form-group">
                 <label for="rideName">Ride Type</label>
                 <select id="rideName" name="rideName" required>
-                    <option value="UberX">UberX</option>
-                    <option value="UberXL">UberXL</option>
-                    <option value="Black">Uber Black</option>
-                    <option value="Lyft">Lyft</option>
-                    <option value="Shared">Shared</option>
-                    <option value="Lux Black XL">Lux Black XL</option>
+                    <option value="">Select a Ride Type</option>
+                    <!-- Uber options -->
+                    <option value="UberX" data-service="Uber">UberX</option>
+                    <option value="UberXL" data-service="Uber">UberXL</option>
+                    <option value="Black" data-service="Uber">Uber Black</option>
+                    <option value="Black SUV" data-service="Uber">Black SUV</option>
+                    <option value="Taxi" data-service="Uber">Taxi</option>
+                    <option value="UberPool" data-service="Uber">UberPool</option>
+                    <option value="WAV" data-service="Uber">WAV</option>
+                    <!-- Lyft options -->
+                    <option value="Lyft" data-service="Lyft">Lyft</option>
+                    <option value="Lyft XL" data-service="Lyft">Lyft XL</option>
+                    <option value="Shared" data-service="Lyft">Shared</option>
+                    <option value="Lux" data-service="Lyft">Lux</option>
+                    <option value="Lux Black" data-service="Lyft">Lux Black</option>
+                    <option value="Lux Black XL" data-service="Lyft">Lux Black XL</option>
                 </select>
             </div>
 
@@ -344,6 +354,39 @@
         const resultDiv = document.getElementById('result');
         const errorDiv = document.getElementById('error');
         const loadingDiv = document.getElementById('loading');
+        const cabTypeSelect = document.getElementById('cabType');
+        const rideNameSelect = document.getElementById('rideName');
+
+        // Function to filter ride type options based on selected service
+        function updateRideTypeOptions() {
+            const selectedService = cabTypeSelect.value;
+            const allOptions = rideNameSelect.querySelectorAll('option');
+            let firstVisibleOption = true;
+
+            allOptions.forEach(option => {
+                const optionService = option.getAttribute('data-service');
+                
+                if (optionService === selectedService) {
+                    option.style.display = 'block';
+                    // Set the first visible option as selected
+                    if (firstVisibleOption && option.value !== '') {
+                        rideNameSelect.value = option.value;
+                        firstVisibleOption = false;
+                    }
+                } else if (option.value === '') {
+                    // Always show the placeholder option
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+
+        // Listen for changes to the cab type dropdown
+        cabTypeSelect.addEventListener('change', updateRideTypeOptions);
+
+        // Initialize ride type options on page load
+        updateRideTypeOptions();
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
