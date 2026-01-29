@@ -1,6 +1,7 @@
 """
 Uber Price Prediction Model
 Trains and saves a multivariate linear regression model for rideshare price prediction
+Live App: https://uber-price-prediction-webapp.onrender.com
 """
 
 import numpy as np

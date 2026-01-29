@@ -1,5 +1,7 @@
 # Uber Price Predictor 🚗
 
+**Live App**: https://uber-price-prediction-webapp.onrender.com
+
 A machine learning web application that predicts Uber/Lyft ride prices using multivariate linear regression.
 
 ## Features
@@ -7,50 +9,17 @@ A machine learning web application that predicts Uber/Lyft ride prices using mul
 - 🤖 Trained multivariate linear regression model
 - 🎨 Clean and intuitive web interface
 - ⚡ Real-time price predictions
-- 🌐 Deployed on Render (live URL)
+- 🌐 Live on Render
 - 📱 Fully responsive design
-
-## Local Setup
-
-### Prerequisites
-- Python 3.8+
-- pip
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/uber_price_predict.git
-cd uber_price_predict
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Train the model (if needed):
-```bash
-python model.py
-```
-
-4. Run the Flask app:
-```bash
-python app.py
-```
-
-5. Open your browser and visit:
-```
-http://localhost:5000
-```
 
 ## Usage
 
-1. Enter the trip distance in miles
-2. Specify the surge multiplier (1.0 = no surge)
-3. Select the service (Uber or Lyft)
-4. Choose the ride type (UberX, UberXL, Black, etc.)
-5. Click "Predict Price" to get an estimate
+1. Visit the live app above
+2. Enter the trip distance in miles
+3. Specify the surge multiplier (1.0 = no surge)
+4. Select the service (Uber or Lyft)
+5. Choose the ride type (UberX, UberXL, Black, etc.)
+6. Click "Predict Price" to get an estimate
 
 ## Model Details
 
@@ -62,19 +31,6 @@ http://localhost:5000
   - One-hot encoded categorical variables
 - **Training**: Gradient Descent with 10,000 iterations
 - **Dataset**: Historical rideshare data
-
-## Deployment on Render
-
-1. Push this repository to GitHub
-2. Connect your GitHub repository to Render:
-   - Go to https://render.com
-   - Click "New +" → "Web Service"
-   - Connect your GitHub account and select this repository
-3. Configure:
-   - **Build Command**: `pip install -r requirements.txt && python model.py`
-   - **Start Command**: `gunicorn app:app`
-   - **Python Version**: 3.11
-4. Deploy and get your live URL!
 
 ## File Structure
 
